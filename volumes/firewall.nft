@@ -1,0 +1,18 @@
+#!/usr/sbin/nft -f
+
+# create the table netsec
+#   note that we don't need to use nft here, simple start the command.
+add table ip netsec_tbl
+
+# create our first chain for incoming traffic
+add chain netsec_tbl netsec_chain { type filter hook prerouting priority 0 ; policy drop ; }
+
+define server_ip = 10.10.1.5
+
+add rule netsec_tbl netsec_chain ip daddr $server_ip counter
+add rule netsec_tbl netsec_chain tcp sport 22 accept
+add rule netsec_tbl netsec_chain tcp dport 22 accept
+add rule netsec_tbl netsec_chain tcp sport 23 accept
+add rule netsec_tbl netsec_chain tcp dport 23 accept
+add rule netsec_tbl netsec_chain tcp sport 80 accept
+add rule netsec_tbl netsec_chain tcp dport 80 accept
